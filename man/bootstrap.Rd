@@ -15,7 +15,7 @@ bootstrap(data, ..., trials = 100)
 }
 \description{
 Perform bootstrap resampling for arbitrary statistics using tidy semantics
-Note that the global mc.cores can be used to control level of parallelism in computing statistics on resamples.
+If the "parallel" pacakge is installed, use the global mc.cores option to control level of parallelism
 }
 \examples{
 boot_results <- bootstrap(iris, sepal_ratio = sum(Sepal.Length) / sum(Sepal.Width),

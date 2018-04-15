@@ -25,7 +25,7 @@ setClass("mcrt", representation(permutation_results = "data.frame",
 #' @exportClass summary.mcrt
 setClass("summary.mcrt", representation(summary = "data.frame",
                                 trials = "integer",
-                                significance_level = "numeric",
+                                level = "numeric",
                                 alternative = "character"),
          validity = function(object) {
            errors <- c()
@@ -43,13 +43,13 @@ setClass("summary.mcrt", representation(summary = "data.frame",
                          "Summary contains a p_value that does not represent a valid probability")
            }
            
-           if (!(significance_level <= 1 && significance_level >= 0)) {
+           if (!(object@level <= 1 && object@level >= 0)) {
              errors <- c(errors,
                          "Significance level must fall in [0,1]")
            }
            
            valid_alternatives <- c('less', 'greater', 'two.sided')
-           if (!(alternative %in% valid_alternatives)) {
+           if (!(object@alternative %in% valid_alternatives)) {
              errors <- c(errors,
                          paste0("Alternative must be one of ", paste(valid_alternatives, collapse = ',')))
            }
@@ -59,8 +59,8 @@ setClass("summary.mcrt", representation(summary = "data.frame",
 
 #' Perform a two sample Monte Carlo randomization test for difference in arbitrary statistics
 #'
-#' Randomization testing for assessing significance of difference in arbitrary test statistics across two samples
-#' Monte Carlo sampling is used to make the test computationally feasible
+#' Randomization testing for assessing significance of difference in arbitrary test statistics across two samples.
+#' If the "parallel" pacakge is installed, use the global mc.cores option to control level of parallelism
 #'
 #' @param sample1 a data.frame representing observations from a single sample or treatment
 #' @param sample2 ''
@@ -75,7 +75,7 @@ setClass("summary.mcrt", representation(summary = "data.frame",
 #' sample1 <- mpg %>% filter(class == 'suv')
 #' sample2 <- mpg %>% filter(class == 'compact')
 #' mcrd_res <- mcrd_test(sample1, sample2, mean = mean(hwy),
-#'                                            median)
+#'                                         median = median(hwy))
 #'
 #' @importFrom parallel mclapply
 #'
@@ -98,7 +98,9 @@ mcrd_test <- function(sample1,
   
   total_sample <- rbind(sample1, sample2)
   
-  results <- mclapply(1:trials, function(trial_ix) {
+  apply_method <- get_apply_method()
+  
+  results <- apply_method(1:trials, function(trial_ix) {
     resample1_ix <- sample(nrow(total_sample), nrow(sample1))
     resample1 <- total_sample[resample1_ix,]
     resample2 <- total_sample[-resample1_ix,]
@@ -141,19 +143,19 @@ mcrd_test <- function(sample1,
 #' data(mpg)
 #' sample1 <- mpg %>% filter(class == 'suv')
 #' sample2 <- mpg %>% filter(class == 'compact')
-#' mcr_results <- mcr_test(sample1, sample2, median = median(hwy),
+#' mcr_results <- mcrd_test(sample1, sample2, median = median(hwy),
 #'                                           mean = mean(hwy))
 #' plot(mcr_results)
 #'
 #' @export plot.mcrt
 plot.mcrt <- function(x, ..., nrows = 1, ncols = NULL) {
-  ncols <- if (is.null(ncols)) ncol(object@permutation_results) else ncols
+  ncols <- if (is.null(ncols)) ncol(x@permutation_results) else ncols
   
   previous_state <- par(mfrow = c(nrows, ncols))
   tryCatch({
-    for (stat_name in colnames(object@permutation_results)) {
-      stat_difference_permuted <- unlist(object@permutation_results[[stat_name]])
-      stat_difference_observed <- unlist(object@original_permutation_results[[stat_name]])
+    for (stat_name in colnames(x@permutation_results)) {
+      stat_difference_permuted <- unlist(x@permutation_results[[stat_name]])
+      stat_difference_observed <- unlist(x@original_permutation_results[[stat_name]])
       
       x_limits = c(min(stat_difference_permuted, stat_difference_observed),
                    max(stat_difference_permuted, stat_difference_observed))
@@ -169,7 +171,7 @@ plot.mcrt <- function(x, ..., nrows = 1, ncols = NULL) {
 
 setMethod("plot", signature("mcrt"), plot.mcrt)
 
-#' Produce confidence intervals for statistics under Monte Carlo randomization testing
+#' Compute empirical confidence intervals for statistics under Monte Carlo randomization testing
 #'
 #' @param object an object of class mcrt
 #' @param parm a vector of statistic names to produce intervals for
@@ -181,15 +183,20 @@ setMethod("plot", signature("mcrt"), plot.mcrt)
 #' data(mpg)
 #' sample1 <- mpg %>% filter(class == 'suv')
 #' sample2 <- mpg %>% filter(class == 'compact')
-#' mcr_results <- mcr_test(~ hwy, sample1, sample2, median = median(hwy))
-#' confint(mcr_results, parm = "median")
+#' mcr_results <- mcrd_test(sample1, sample2, median = median(hwy),
+#'                                            mean = mean(hwy))
+#' confint(mcr_results, parm = c("mean", "median"))
 #'
 #' @export confint.mcrt
 confint.mcrt <- function(object, parm, level = .95, ...) {
-  summary_df <- as.data.frame(summary(object, empirical_interval_level = level))
+  stopifnot(level >= 0 && level <= 1)
   
-  cis<- summary_df[summary_df$statistic_name %in% parm, c('ci_lower_bound', 'ci_lower_bound')]
-  colnames(cis) <- as.character(c((1 - level) / 2, level + (1 - level) / 2))
+  summary_df <- as.data.frame(summary(object, level = level))
+  
+  cis<- summary_df[summary_df$statistic %in% parm, c('ci_lower', 'ci_upper')]
+  percentiles <- as.character(100 * c((1 - level) / 2, level + (1 - level) / 2))
+  colnames(cis) <- sapply(percentiles, function(x){ paste0(x,'%') })
+  rownames(cis) <- parm
   
   as.matrix(cis)
 }
@@ -202,8 +209,8 @@ setMethod("confint", signature("mcrt"), confint.mcrt)
 #'
 #' @export print.summary.mcrt
 print.mcrt <- function(x, ...) { 
-  cat("Monte Carlo randomization test of", as.character(x@trials), " trials on the following statistics:", paste0(x@permutation_results, collapse = ','))
-  cat(x@summary)
+  cat("Monte Carlo randomization test of", as.character(nrow(x@permutation_results)), 
+      " trials on the following statistics:", paste0(colnames(x@permutation_results), collapse = ','))
 }
 
 setMethod("print", signature(x = "mcrt"), print.mcrt)
@@ -215,7 +222,7 @@ setMethod("show", signature(object = "mcrt"), function(object) { print.mcrt(obje
 #' For two sided hypotheses, reported p-value is the minimum one sided p-value with a Bonferroni correction.
 #'
 #' @param object an mcrt object to be summarized
-#' @param significance_level the significance level for empirical confidence intervals of statistic differences
+#' @param level the width of empirical confidence intervals of statistic differences
 #' @param alternative the alternative used for tests of significance of statistic differences. one of 'less', 'greater', 'two.sided'
 #'
 #' @author kholub
@@ -230,8 +237,8 @@ setMethod("show", signature(object = "mcrt"), function(object) { print.mcrt(obje
 #' @importFrom dplyr bind_rows
 #'
 #' @export summary.mcrt
-summary.mcrt <- function(object, significance_level = .05, alternative = 'two.sided', ...) {
-  stopifnot(significance_level <= 1 && significance_level >= 0)
+summary.mcrt <- function(object, level = .05, alternative = 'two.sided', ...) {
+  stopifnot(level <= 1 && level >= 0)
   
   total_summary <- data.frame()
   for (statistic_name in colnames(object@permutation_results)) {
@@ -242,16 +249,16 @@ summary.mcrt <- function(object, significance_level = .05, alternative = 'two.si
     lower_tail <- cdf(observed_difference)
     if (alternative == 'less') {
       empirical_p <- lower_tail
-      empirical_ci <- c(-Inf, quantile(permuted_differences, significance_level))
+      empirical_ci <- c(-Inf, quantile(permuted_differences, level))
     }
     else if (alternative == 'greater') {
       empirical_p <- 1 - lower_tail
-      empirical_ci <- c(quantile(permuted_differences, 1 - significance_level), Inf)
+      empirical_ci <- c(quantile(permuted_differences, 1 - level), Inf)
     }
     else if (alternative == 'two.sided') {
       # by selecting the minimum, we are implicitly performing 2 tests, so we apply a Bonferroni correction
       empirical_p <- 2 * min(1 - lower_tail, lower_tail)
-      empirical_ci <- quantile(permuted_differences, c(significance_level / 2, 1 - significance_level / 2))
+      empirical_ci <- quantile(permuted_differences, c(level / 2, 1 - level / 2))
     }
     else {
       stop('Unrecognized "alternative" argument. Must be one of "less", "greater", "two.sided"')
@@ -264,10 +271,12 @@ summary.mcrt <- function(object, significance_level = .05, alternative = 'two.si
                            stringsAsFactors = FALSE)
   }
   
+  rownames(total_summary) <- NULL
+  
   new('summary.mcrt', 
       summary = total_summary,
       trials = nrow(object@permutation_results),
-      significance_level = significance_level,
+      level = level,
       alternative = alternative)
 }
 
@@ -290,8 +299,8 @@ setMethod("as.data.frame", signature("summary.mcrt"), as.data.frame.summary.mcrt
 #'
 #' @export print.summary.mcrt
 print.summary.mcrt <- function(x, ...) { 
-  cat("Randomization test on", as.character(x@trials), " against alternative of", x@alternative, "at significance", as.character(x@significance_level), '\n')
-  cat(x@summary)
+  cat("Randomization test on", as.character(x@trials), " against alternative of", x@alternative, "at significance", as.character(x@level), '\n')
+  print(x@summary, row.names = FALSE)
 }
 
 setMethod("print", signature(x = "summary.mcrt"), print.summary.mcrt)
