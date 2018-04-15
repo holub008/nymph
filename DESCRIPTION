@@ -1,0 +1,10 @@
+Package: nymph
+Title: Randomization tests for nonparametric inference
+Version: 0.0.0.9000
+Authors@R: person("Karl", "Holub", email = "holub008@umn.edu", role = c("aut", "cre"))
+Description: Randomization methods provide a powerful toolset for performing inference on a wide range of statistics with few distributional constraints on the data. nymph provides a simple & generic interface to this class of methods using nonstandard evaluation & minimalist design.
+Depends: R (>= 3.4.4)
+License: MIT 
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
