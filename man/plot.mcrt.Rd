@@ -20,7 +20,7 @@ Visualize the distribution of statistic comparisons between two samples
 data(mpg)
 sample1 <- mpg \%>\% filter(class == 'suv')
 sample2 <- mpg \%>\% filter(class == 'compact')
-mcr_results <- mcr_test(sample1, sample2, median = median(hwy),
+mcr_results <- mcrd_test(sample1, sample2, median = median(hwy),
                                           mean = mean(hwy))
 plot(mcr_results)
 

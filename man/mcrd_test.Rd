@@ -27,7 +27,7 @@ data(mpg)
 sample1 <- mpg \%>\% filter(class == 'suv')
 sample2 <- mpg \%>\% filter(class == 'compact')
 mcrd_res <- mcrd_test(sample1, sample2, mean = mean(hwy),
-                                           median)
+                                        median = median(hwy))
 
 }
 \author{

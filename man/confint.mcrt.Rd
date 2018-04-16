@@ -2,7 +2,7 @@
 % Please edit documentation in R/randomization_tests.R
 \name{confint.mcrt}
 \alias{confint.mcrt}
-\title{Produce confidence intervals for statistics under Monte Carlo randomization testing}
+\title{Compute empirical confidence intervals for statistics under Monte Carlo randomization testing}
 \usage{
 confint.mcrt(object, parm, level = 0.95, ...)
 }
@@ -14,14 +14,15 @@ confint.mcrt(object, parm, level = 0.95, ...)
 \item{level}{the width of confidence intervals}
 }
 \description{
-Produce confidence intervals for statistics under Monte Carlo randomization testing
+Compute empirical confidence intervals for statistics under Monte Carlo randomization testing
 }
 \examples{
 data(mpg)
 sample1 <- mpg \%>\% filter(class == 'suv')
 sample2 <- mpg \%>\% filter(class == 'compact')
-mcr_results <- mcr_test(~ hwy, sample1, sample2, median = median(hwy))
-confint(mcr_results, parm = "median")
+mcr_results <- mcrd_test(sample1, sample2, median = median(hwy),
+                                           mean = mean(hwy))
+confint(mcr_results, parm = c("mean", "median"))
 
 }
 \author{

@@ -2,10 +2,26 @@
 % Please edit documentation in R/bootstrap.R
 \name{confint.bootstrap}
 \alias{confint.bootstrap}
-\title{Compute confidence intervals for a bootstrapped statistic}
+\title{Compute empirical confidence intervals for bootstrapped statistics}
 \usage{
 confint.bootstrap(object, parm, level = 0.95, ...)
 }
+\arguments{
+\item{object}{a bootstrap object}
+
+\item{parm}{a vector of statistics to produce confidence intervals for}
+
+\item{level}{the width of the intervals}
+}
 \description{
-Compute confidence intervals for a bootstrapped statistic
+Compute empirical confidence intervals for bootstrapped statistics
+}
+\examples{
+boot_results <- bootstrap(iris, sepal_ratio = sum(Sepal.Length) / sum(Sepal.Width),
+                                petal_ratio = sum(Petal.Length) / sum(Petal.Width))
+confint(boot_results, 'sepal_ratio')
+
+}
+\author{
+kholub
 }

@@ -4,13 +4,12 @@
 \alias{summary.mcrt}
 \title{Summarize the results of a Monte Carlo randomization test}
 \usage{
-summary.mcrt(object, significance_level = 0.05, alternative = "two.sided",
-  ...)
+summary.mcrt(object, level = 0.05, alternative = "two.sided", ...)
 }
 \arguments{
 \item{object}{an mcrt object to be summarized}
 
-\item{significance_level}{the significance level for empirical confidence intervals of statistic differences}
+\item{level}{the width of empirical confidence intervals of statistic differences}
 
 \item{alternative}{the alternative used for tests of significance of statistic differences. one of 'less', 'greater', 'two.sided'}
 }

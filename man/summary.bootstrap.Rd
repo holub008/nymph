@@ -9,7 +9,7 @@ summary.bootstrap(object, level = 0.95, ...)
 \arguments{
 \item{object}{a bootstrap result to be summarized}
 
-\item{empirical_ci_level}{the lower quantile used to compute empirical intervals on the bootstrapped statistic}
+\item{level}{the lower quantile used to compute empirical intervals on the bootstrapped statistic}
 }
 \description{
 Summarize a bootstrap result

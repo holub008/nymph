@@ -50,8 +50,6 @@ setClass("summary.bootstrap", representation(summary = "data.frame",
 #' boot_results <- bootstrap(iris, sepal_ratio = sum(Sepal.Length) / sum(Sepal.Width),
 #'                                 petal_ratio = sum(Petal.Length) / sum(Petal.Width))
 #'
-#' @importFrom parallel mclapply
-#'
 #' @export bootstrap
 bootstrap <- function(data, ...,
                       trials = 1e2) {
