@@ -133,8 +133,6 @@ setMethod("show", signature(object = "bootstrap"), function(object) { print.boot
 #'                                 petal_ratio = sum(Petal.Length) / sum(Petal.Width))
 #' summary(boot_results)
 #'
-#' @importFrom dplyr bind_rows
-#'
 #' @export summary.bootstrap
 summary.bootstrap <- function(object, level = .95, ...) {
   stopifnot(level >= 0 && level <= 1)
@@ -147,12 +145,12 @@ summary.bootstrap <- function(object, level = .95, ...) {
     
     empirical_ci <- quantile(bootstrapped_statistic, c((1 - level) / 2, level + (1 - level) / 2))
     
-    total_summary <- bind_rows(total_summary, list(statistic =  statistic_name,
+    total_summary <- rbind(total_summary, list(statistic =  statistic_name,
                                                    mean = statistic_mean,
                                                    standard_error = statistic_se,
                                                    ci_lower = empirical_ci[1],
-                                                   ci_upper = empirical_ci[2]
-    ))
+                                                   ci_upper = empirical_ci[2]),
+                           stringsAsFactors = FALSE)
   }
   
   new('summary.bootstrap',

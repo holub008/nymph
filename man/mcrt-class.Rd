@@ -3,7 +3,7 @@
 \docType{class}
 \name{mcrt-class}
 \alias{mcrt-class}
-\title{S4 bootstrap class}
+\title{S4 Monte Carlo randomization test class}
 \description{
-S4 bootstrap class
+S4 Monte Carlo randomization test class
 }
