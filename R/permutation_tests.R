@@ -4,15 +4,13 @@ setClass("prmt", representation(permutation_results = "data.frame",
                                 original_permutation_results = "list"),
          validity = function(object) {
            errors <- c()
-           if (any(is.na(colnames(object@permutation_results))) || # sneakily relies on short circuit evaluation
-               is.null(colnames(object@permutation_results)) ||
-               any(colnames(object@permutation_results) == '')) {
+           if (!statistic_names_valid(colnames(object@permutation_results))) {
              error <- "One or more bootstrapped statistic name(s) missing"
              errors <- c(errors, error)
            }
            
-           if (any(is.na(names(object@original_permutation_results))) ||
-               is.null(names(object@original_permutation_results)) ||
+           if (!statistic_names_valid(colnames(object@original_permutation_results)) ||
+               ncol(object@permutation_results) != ncol(object@original_permutation_results) ||
                any(colnames(object@permutation_results) != names(object@original_permutation_results))) {
              error <- "One or more original permutation statistic name(s) missing"
              errors <- c(errors, error)
@@ -56,6 +54,87 @@ setClass("summary.prmt", representation(summary = "data.frame",
            
            if (length(errors) == 0) TRUE else errors
          })
+
+#' Perform a full permutation test
+#'
+#' This function should only be used for academic purposes or small sample sizes (time grows factorially with number of observations)
+#' If the "parallel" pacakge is installed, use the global mc.cores option to control level of parallelism
+#'
+#' @param data a data frame to draw statistics from
+#' @param statistics a function or vector of functions accepting a data frame, returning a scalar statistic
+#' @param group_var a character, singular column name in the data representing groups.
+#' @param statistic_names the names of statistics that are computed. must be specified if the supplied statistics do not have names
+#' @param trials the number of Monte Carlo trials to perform
+#' 
+#' @author kholub
+#' @examples
+#' library(dplyr)
+#' data(mpg)
+#' test_data <- mpg %>% 
+#'   filter(class %in% c('suv', 'compact')) %>%
+#'   sample_n(10) # this just for computational feasibility of illustrative example
+#' prm_res <- prm_test(test_data, c(median_difference = function(df) {
+#'                                                                      group_medians <- df %>%
+#'                                                                        group_by(class) %>%
+#'                                                                        summarize(
+#'                                                                          median = median(hwy))
+#'                                                                      as.numeric(group_medians[group_medians$class == 'suv', 'median']) -
+#'                                                                      as.numeric(group_medians[group_medians$class == 'compact', 'median'])
+#'                                                                   })
+#'                    )
+#'
+#' @export prm_test
+prm_test <- function(data, statistics, group_var,
+                     statistic_names = names(statistics),
+                     max_observations = 10) {
+  if (nrow(data) > max_observations) {
+    stop('Attempting to perform a permutation test of', as.character(max_observations), 'observations with max configured to', as.character(max_observations), 
+         '. Consider Monte Carlo randomization (approximate) alternatives.')
+  }
+  
+  if (is.function(statistics)) {
+    statistics <- c(statistics)
+  }
+  
+  if (length(statistics) < 1) {
+    stop('Must specify one or more statistics to test')
+  }
+  
+  if (!statistic_names_valid(statistic_names) ||
+      length(statistics) != length(statistic_names)) {
+    stop('One or more statistic name(s) missing')
+  }
+  
+  apply_method <- get_apply_method()
+  
+  # TODO calculate permutations dynamically so we aren'y memory bound
+  all_permutations <- generate_all_permutation_indices(nrow(data))
+  
+  results <- apply_method(1:nrow(all_permutations), function(trial_ix) {
+    permuted_ix <- sample(nrow(data), nrow(data))
+    permuted_data <- data
+    permuted_data[[group_var]] <- data[[group_var]][permuted_ix]
+    
+    results_row <- lapply(statistics, function(stat){
+      stat(permuted_data)
+    })
+    
+    results_row
+  })
+  
+  # better alternatives, but keeps it base R only
+  results <- data.frame(do.call(rbind, results))
+  colnames(results) <- statistic_names
+  
+  original_permutation_results <- lapply(statistics, function(stat) {
+    stat(data)
+  })
+  names(original_permutation_results) <- statistic_names
+  
+  new('prmt',
+      permutation_results = results,
+      original_permutation_results = original_permutation_results)
+}
 
 #' Visualize observed statistics against null distributions
 #'
