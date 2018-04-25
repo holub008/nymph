@@ -4,7 +4,7 @@
 \alias{summary.prmt}
 \title{Summarize the results of a permutation test}
 \usage{
-summary.prmt(object, level = 0.05, alternative = "two.sided", ...)
+summary.prmt(object, level = 0.95, alternative = "two.sided", ...)
 }
 \arguments{
 \item{object}{a prmt object to be summarized}

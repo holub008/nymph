@@ -9,8 +9,8 @@ setClass("prmt", representation(permutation_results = "data.frame",
              errors <- c(errors, error)
            }
            
-           if (!statistic_names_valid(colnames(object@original_permutation_results)) ||
-               ncol(object@permutation_results) != ncol(object@original_permutation_results) ||
+           if (!statistic_names_valid(names(object@original_permutation_results)) ||
+               ncol(object@permutation_results) != length(object@original_permutation_results) ||
                any(colnames(object@permutation_results) != names(object@original_permutation_results))) {
              error <- "One or more original permutation statistic name(s) missing"
              errors <- c(errors, error)
@@ -72,7 +72,7 @@ setClass("summary.prmt", representation(summary = "data.frame",
 #' data(mpg)
 #' test_data <- mpg %>% 
 #'   filter(class %in% c('suv', 'compact')) %>%
-#'   sample_n(10) # this just for computational feasibility of illustrative example
+#'   sample_n(7) # this just for computational feasibility of illustrative example
 #' prm_res <- prm_test(test_data, c(median_difference = function(df) {
 #'                                                                      group_medians <- df %>%
 #'                                                                        group_by(class) %>%
@@ -80,8 +80,8 @@ setClass("summary.prmt", representation(summary = "data.frame",
 #'                                                                          median = median(hwy))
 #'                                                                      as.numeric(group_medians[group_medians$class == 'suv', 'median']) -
 #'                                                                      as.numeric(group_medians[group_medians$class == 'compact', 'median'])
-#'                                                                   })
-#'                    )
+#'                                                                   }), 
+#'                     'class')
 #'
 #' @export prm_test
 prm_test <- function(data, statistics, group_var,
@@ -242,7 +242,7 @@ setMethod("show", signature(object = "prmt"), function(object) { print.prmt(obje
 #' @importFrom dplyr bind_rows
 #'
 #' @export summary.prmt
-summary.prmt <- function(object, level = .05, alternative = 'two.sided', ...) {
+summary.prmt <- function(object, level = .95, alternative = 'two.sided', ...) {
   stopifnot(level <= 1 && level >= 0)
   
   total_summary <- data.frame()
@@ -263,7 +263,7 @@ summary.prmt <- function(object, level = .05, alternative = 'two.sided', ...) {
     else if (alternative == 'two.sided') {
       # by selecting the minimum, we are implicitly performing 2 tests, so we apply a Bonferroni correction
       empirical_p <- 2 * min(1 - lower_tail, lower_tail)
-      empirical_ci <- quantile(permuted_differences, c(level / 2, 1 - level / 2))
+      empirical_ci <- quantile(permuted_differences, c((1 - level) / 2, level + (1 - level) / 2))
     }
     else {
       stop('Unrecognized "alternative" argument. Must be one of "less", "greater", "two.sided"')

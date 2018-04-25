@@ -27,15 +27,15 @@ If the "parallel" pacakge is installed, use the global mc.cores option to contro
 library(dplyr)
 data(mpg)
 test_data <- mpg \%>\% filter(class \%in\% c('suv', 'compact'))
-mcrd_res <- mcrd_test(test_data, c(median_difference = function(df) {
+mcr_res <- mcr_test(test_data, c(median_difference = function(df) {
                                                                       group_medians <- df \%>\%
                                                                         group_by(class) \%>\%
                                                                         summarize(
                                                                           median = median(hwy))
-                                                                       as.numeric(group_medians[group_medians$class == 'suv', 'median']) -
+                                                                      as.numeric(group_medians[group_medians$class == 'suv', 'median']) -
                                                                          as.numeric(group_medians[group_medians$class == 'compact', 'median'])
-                                                                     })
-                      )
+                                                                     }),
+                      'class')
 
 }
 \author{

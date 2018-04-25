@@ -27,7 +27,7 @@ library(dplyr)
 data(mpg)
 test_data <- mpg \%>\% 
   filter(class \%in\% c('suv', 'compact')) \%>\%
-  sample_n(10) # this just for computational feasibility of illustrative example
+  sample_n(7) # this just for computational feasibility of illustrative example
 prm_res <- prm_test(test_data, c(median_difference = function(df) {
                                                                      group_medians <- df \%>\%
                                                                        group_by(class) \%>\%
@@ -35,7 +35,8 @@ prm_res <- prm_test(test_data, c(median_difference = function(df) {
                                                                          median = median(hwy))
                                                                      as.numeric(group_medians[group_medians$class == 'suv', 'median']) -
                                                                      as.numeric(group_medians[group_medians$class == 'compact', 'median'])
-                                                                  })
+                                                                  }), 
+                    'class')
 
 }
 \author{
