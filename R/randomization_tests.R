@@ -99,8 +99,6 @@ mcr_test <- function(data, statistics, group_var,
 #' mcrd_res <- mcrd_test(sample1, sample2, mean = mean(hwy),
 #'                                         median = median(hwy))
 #'
-#' @importFrom parallel mclapply
-#'
 #' @export mcrd_test
 mcrd_test <- function(sample1, 
                       sample2,

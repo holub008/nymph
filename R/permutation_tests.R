@@ -239,8 +239,6 @@ setMethod("show", signature(object = "prmt"), function(object) { print.prmt(obje
 #' mcr_results <- mcrd_test(sample1, sample2, mean = mean(hwy))
 #' summary(mcr_results)
 #'
-#' @importFrom dplyr bind_rows
-#'
 #' @export summary.prmt
 summary.prmt <- function(object, level = .95, alternative = 'two.sided', ...) {
   stopifnot(level <= 1 && level >= 0)
