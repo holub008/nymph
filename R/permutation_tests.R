@@ -5,7 +5,7 @@ setClass("prmt", representation(permutation_results = "data.frame",
          validity = function(object) {
            errors <- c()
            if (!statistic_names_valid(colnames(object@permutation_results))) {
-             error <- "One or more bootstrapped statistic name(s) missing"
+             error <- "One or more permutation statistic name(s) missing"
              errors <- c(errors, error)
            }
            
