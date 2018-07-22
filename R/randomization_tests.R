@@ -127,7 +127,7 @@ mcrd_test <- function(sample1,
   
   apply_method <- get_apply_method()
   
-  results <- lapply(1:trials, function(trial_ix) {
+  results <- apply_method(1:trials, function(trial_ix) {
     resample1_ix <- sample(nrow(total_sample), nrow(sample1))
     # drop = FALSE ensures that the result remains a df (R df subsetting behaves poorly in the case of 1 column)
     resample1 <- total_sample[resample1_ix, , drop = FALSE] 
