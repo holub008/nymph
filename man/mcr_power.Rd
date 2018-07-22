@@ -4,12 +4,30 @@
 \alias{mcr_power}
 \title{Perform a power analysis of a randomization test}
 \usage{
-mcr_power(generate_data, statistics, group_var, alternative,
-  statistic_names = names(statistics), test_trials = 100,
+mcr_power(generate_data, statistics, group_var, test_trials = 100,
   power_trials = 100)
+}
+\arguments{
+\item{generate_data}{a function returning a dataframe matching structure expected by statistics}
+
+\item{statistics}{a list of functions to evaluate data produced by generate_data}
+
+\item{group_var}{a character column name to split the data into groups}
+
+\item{test_trials}{the number of MC trials to be performed per experiment}
+
+\item{power_trials}{the number of experiments to be performed in the power calculation}
 }
 \description{
 Perform a power analysis of a randomization test
+}
+\examples{
+gen_data <- function(){ data.frame(x = c(rnorm(50), rnorm(50, 1)), class = rep(c('a', 'b'), each = 50)) }
+mcrp <- mcr_power(gen_data, c(mean = function(df){ mean(df[df$class == 'a', 'x']) - mean(df[df$class == 'b', 'x']) }, 
+                              median = function(df){ median(df[df$class == 'a', 'x']) - median(df[df$class == 'b', 'x']) }),
+    'class')
+mcrp
+
 }
 \author{
 kholub

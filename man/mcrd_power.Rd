@@ -3,15 +3,35 @@
 \name{mcrd_power}
 \alias{mcrd_power}
 \title{Perform a power analysis of a randomization test
-Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences}
+Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
+TODO this function is broken with NSE problems}
 \usage{
-mcrd_power(generate_sample1, generate_sample2, alternative, ...,
-  statistic_names = names(statistics), test_trials = 100,
+mcrd_power(generate_sample1, generate_sample2, ..., test_trials = 100,
   power_trials = 100)
+}
+\arguments{
+\item{generate_sample1}{a function returning a dataframe matching structure expected by statistics}
+
+\item{generate_sample2}{''}
+
+\item{...}{expressions to evaluate data produced by sample generating functions}
+
+\item{test_trials}{the number of MC trials to be performed per experiment}
+
+\item{power_trials}{the number of experiments to be performed in the power calculation}
 }
 \description{
 Perform a power analysis of a randomization test
 Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
+TODO this function is broken with NSE problems
+}
+\examples{
+gen_data_s1 <- function(){ data.frame(x = rnorm(50), class = 'a') }
+gen_data_s2 <- function(){ data.frame(x = rnorm(50, 1), class = 'b') }
+mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x),
+    'class')
+mcrp
+
 }
 \author{
 kholub

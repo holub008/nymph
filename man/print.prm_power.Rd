@@ -6,8 +6,19 @@
 \usage{
 print.prm_power(x, ...)
 }
+\arguments{
+\item{x}{a prm_power object to be printed}
+}
 \description{
 Print a permutation test power analysis
+}
+\examples{
+gen_data <- function(){ data.frame(x = c(rnorm(50), rnorm(50, 1)), class = rep(c('a', 'b'), each = 50)) }
+mcrp <- mcr_power(gen_data, c(mean = function(df){ mean(df[df$class == 'a', 'x']) - mean(df[df$class == 'b', 'x']) }, 
+                              median = function(df){ median(df[df$class == 'a', 'x']) - median(df[df$class == 'b', 'x']) }),
+    'class')
+print(mcrp)   
+
 }
 \author{
 kholub

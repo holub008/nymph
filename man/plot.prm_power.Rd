@@ -5,12 +5,30 @@
 \title{Visualize the power analysis of a randomization test
 If alpha is left unspecified, the distribution of p-values is visualized. If alpha is specified, power is plotted as a function of alpha}
 \usage{
-plot.prm_power(x, ..., statistic, alternative, alpha = seq(0.01, 0.99, by =
+plot.prm_power(x, ..., statistic, alternative, alpha = seq(0.01, 0.25, by =
   0.01))
+}
+\arguments{
+\item{x}{a prm_power object to be plotted}
+
+\item{statistic}{the name of the statistic to be visualized}
+
+\item{alternative}{the alternative hypotheses for p-value determination. one of "less", "greater", "two.sided"}
+
+\item{alpha}{the numeric significance level(s) [0-1] used in inference - determines the FPR}
 }
 \description{
 Visualize the power analysis of a randomization test
 If alpha is left unspecified, the distribution of p-values is visualized. If alpha is specified, power is plotted as a function of alpha
+}
+\examples{
+gen_data <- function(){ data.frame(x = c(rnorm(50), rnorm(50, 1)), class = rep(c('a', 'b'), each = 50)) }
+mcrp <- mcr_power(gen_data, c(mean = function(df){ mean(df[df$class == 'a', 'x']) - mean(df[df$class == 'b', 'x']) }, 
+                              median = function(df){ median(df[df$class == 'a', 'x']) - median(df[df$class == 'b', 'x']) }),
+    'class')
+plot(mcrp, statistic = 'median', alternative = 'two.sided')
+plot(mcrp, statistic = 'median', alternative = 'two.sided', alpha = NULL)
+
 }
 \author{
 kholub

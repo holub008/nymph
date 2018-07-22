@@ -6,8 +6,23 @@
 \usage{
 summary.prm_power(object, alpha, alternative, ...)
 }
+\arguments{
+\item{object}{a prm_power object to be summarized}
+
+\item{alpha}{the numeric significance level(s) [0-1] used in inference - determines the FPR}
+
+\item{alternative}{the alternative hypotheses for p-value determination. one of "less", "greater", "two.sided"}
+}
 \description{
 Summarize a power analysis of a randomization test
+}
+\examples{
+gen_data <- function(){ data.frame(x = c(rnorm(50), rnorm(50, 1)), class = rep(c('a', 'b'), each = 50)) }
+mcrp <- mcr_power(gen_data, c(mean = function(df){ mean(df[df$class == 'a', 'x']) - mean(df[df$class == 'b', 'x']) }, 
+                              median = function(df){ median(df[df$class == 'a', 'x']) - median(df[df$class == 'b', 'x']) }),
+    'class')
+summary(mcrp, .05, 'two.sided')
+
 }
 \author{
 kholub
