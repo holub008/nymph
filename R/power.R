@@ -103,7 +103,6 @@ mcr_power <- function(generate_data, statistics, group_var,
 
 #' Perform a power analysis of a randomization test
 #' Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
-#' TODO this function is broken with NSE problems
 #' 
 #' @param generate_sample1 a function returning a dataframe matching structure expected by statistics
 #' @param generate_sample2 ''
@@ -115,8 +114,8 @@ mcr_power <- function(generate_data, statistics, group_var,
 #' @examples 
 #' gen_data_s1 <- function(){ data.frame(x = rnorm(50), class = 'a') }
 #' gen_data_s2 <- function(){ data.frame(x = rnorm(50, 1), class = 'b') }
-#' mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x),
-#'     'class')
+#' mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x), 
+#'                    test_trials = 1e2)
 #' mcrp
 #'
 #' @export mcrd_power

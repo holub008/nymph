@@ -3,8 +3,7 @@
 \name{mcrd_power}
 \alias{mcrd_power}
 \title{Perform a power analysis of a randomization test
-Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
-TODO this function is broken with NSE problems}
+Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences}
 \usage{
 mcrd_power(generate_sample1, generate_sample2, ..., test_trials = 100,
   power_trials = 100)
@@ -23,13 +22,12 @@ mcrd_power(generate_sample1, generate_sample2, ..., test_trials = 100,
 \description{
 Perform a power analysis of a randomization test
 Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
-TODO this function is broken with NSE problems
 }
 \examples{
 gen_data_s1 <- function(){ data.frame(x = rnorm(50), class = 'a') }
 gen_data_s2 <- function(){ data.frame(x = rnorm(50, 1), class = 'b') }
-mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x),
-    'class')
+mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x), 
+                   test_trials = 1e2)
 mcrp
 
 }
