@@ -12,17 +12,10 @@ devtools::install_git('https://github.com/holub008/nymph')
 Randomization methods provide a powerful toolset for performing inference on a wide range of statistics with few distributional constraints on the data. I believe these methods are underutilized, partially as a result of poor library support; existing R packages (e.g. [coin](https://cran.r-project.org/web/packages/coin/index.html) & [perm](https://cran.r-project.org/web/packages/perm/index.html)) provide a narrow range of functionality or obfuscate the underlying simplicity of the methods from the user. nymph aims to provide the practitioner a simple & generic interface to this class of methods.
 
 ## Examples
-We'll explore the iris dataset with the question of: "Are there differences in the ratio of sepal length to width across plant species?" It is often challenging to analytically arrive at null distributions for ratios of random variables- even those with "nice" distributions. 
 
-```R
-library(ggplot2)
-library(dplyr)
+### Inference
 
-iris %>%
-  filter(Species %in% c('versicolor', 'virginica')) %>%
-  ggplot() +
-    geom_violin(aes(Species, Sepal.Length / Sepal.Width))
-```
+### Power Analysis
 
 ## Implementation
   * No dependencies
