@@ -123,14 +123,15 @@ mcrd_test <- function(sample1,
     stop('One or more statistic name(s) missing')
   }
   
-  total_sample <- rbind(sample1, sample2)
+  total_sample <- merge(sample1, sample2, all = TRUE)
   
   apply_method <- get_apply_method()
   
-  results <- apply_method(1:trials, function(trial_ix) {
+  results <- lapply(1:trials, function(trial_ix) {
     resample1_ix <- sample(nrow(total_sample), nrow(sample1))
-    resample1 <- total_sample[resample1_ix,]
-    resample2 <- total_sample[-resample1_ix,]
+    # drop = FALSE ensures that the result remains a df (R df subsetting behaves poorly in the case of 1 column)
+    resample1 <- total_sample[resample1_ix, , drop = FALSE] 
+    resample2 <- total_sample[-resample1_ix, , drop = FALSE]
     
       results_row <- lapply(unname(statistics_call), function(stat){
         sample1_stat <- eval(stat, resample1, eval_env)
