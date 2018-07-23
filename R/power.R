@@ -102,7 +102,8 @@ mcr_power <- function(generate_data, statistics, group_var,
 }
 
 #' Perform a power analysis of a randomization test
-#' Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
+#' 
+#' Note this is a convenience wrapper for \code{\link{mcr_power}} in the case of two sample differences
 #' 
 #' @param generate_sample1 a function returning a dataframe matching structure expected by statistics
 #' @param generate_sample2 ''
@@ -139,6 +140,7 @@ mcrd_power <- function(generate_sample1, generate_sample2, ...,
 }
 
 #' Visualize the power analysis of a randomization test
+#' 
 #' If alpha is left unspecified, the distribution of p-values is visualized. If alpha is specified, power is plotted as a function of alpha
 #'
 #' @param x a prm_power object to be plotted

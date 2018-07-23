@@ -2,8 +2,7 @@
 % Please edit documentation in R/power.R
 \name{mcrd_power}
 \alias{mcrd_power}
-\title{Perform a power analysis of a randomization test
-Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences}
+\title{Perform a power analysis of a randomization test}
 \usage{
 mcrd_power(generate_sample1, generate_sample2, ..., test_trials = 100,
   power_trials = 100)
@@ -20,8 +19,7 @@ mcrd_power(generate_sample1, generate_sample2, ..., test_trials = 100,
 \item{power_trials}{the number of experiments to be performed in the power calculation}
 }
 \description{
-Perform a power analysis of a randomization test
-Note this is a convinience wrapper for \code{\link{mcr_power}} in the case of two sample differences
+Note this is a convenience wrapper for \code{\link{mcr_power}} in the case of two sample differences
 }
 \examples{
 gen_data_s1 <- function(){ data.frame(x = rnorm(50), class = 'a') }

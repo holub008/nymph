@@ -2,8 +2,7 @@
 % Please edit documentation in R/power.R
 \name{plot.prm_power}
 \alias{plot.prm_power}
-\title{Visualize the power analysis of a randomization test
-If alpha is left unspecified, the distribution of p-values is visualized. If alpha is specified, power is plotted as a function of alpha}
+\title{Visualize the power analysis of a randomization test}
 \usage{
 plot.prm_power(x, ..., statistic, alternative, alpha = seq(0.01, 0.25, by =
   0.01))
@@ -18,7 +17,6 @@ plot.prm_power(x, ..., statistic, alternative, alpha = seq(0.01, 0.25, by =
 \item{alpha}{the numeric significance level(s) [0-1] used in inference - determines the FPR}
 }
 \description{
-Visualize the power analysis of a randomization test
 If alpha is left unspecified, the distribution of p-values is visualized. If alpha is specified, power is plotted as a function of alpha
 }
 \examples{
