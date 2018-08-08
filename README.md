@@ -40,7 +40,7 @@ Permutation test of 1000 permutations against alternative of two.sided at signif
           lw_ratio -0.16575289 0.17387946 0.55020960       0
  length_proportion -0.01267495 0.01315527 0.04388741       0
 ```
-Quite convincing that a difference exists! For a visualization:
+Quite convincing that a difference exists! For a visualization of the observed statistic differences (blue) against their null distributions:
 ```R
 plot(mcrt)
 ```
