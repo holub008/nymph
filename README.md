@@ -44,6 +44,7 @@ Quite convincing that a difference exists! For a visualization:
 ```R
 plot(mcrt)
 ```
+![iris_mcrt](docs/images/iris_mcrt.png)
 
 ### Power Analysis
 Here we perform a power analysis of a contrived experiment - a two treatment ('a' & 'b') experiment with a minimally impactful effect size of 1 against otherwise standard normal populations.
@@ -71,12 +72,14 @@ We can also visualize the distribution of p-values (from repeated simulation of 
 plot(mcrp, statistic = 'median', alternative = 'two.sided', 
      alpha = NULL)
 ```
+![median_p_dist](docs/images/median_p_dist.png)
 
 Or we can visualize how power varies across desired inferential FPRs:
 ```R
 plot(mcrp, statistic = 'median', alternative = 'two.sided', 
      alpha = seq(.01, .2, by = .01))
 ```
+![median_alpha_v_power](docs/images/median_alpha_v_power.png)
 
 ## Implementation
   * No dependencies
