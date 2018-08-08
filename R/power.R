@@ -170,7 +170,7 @@ plot.prm_power <- function(x, ..., statistic, alternative,
     })
     
     hist(p, 
-         main = paste0('p-values for', statistic),
+         main = paste0('p-values for ', statistic),
          xlab = 'p-value',
          freq = TRUE)
   }
