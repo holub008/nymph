@@ -1,5 +1,5 @@
 # nymph
-Randomization tests for nonparametric inference
+Randomization tests for noNparaMetric INFerence
 
 ## Installation
 ```R
