@@ -52,7 +52,7 @@ gen_data_s1 <- function(){ data.frame(x = rnorm(50), class = 'a') }
 gen_data_s2 <- function(){ data.frame(x = rnorm(50, 1), class = 'b') }
 mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x), 
                     test_trials = 1e2)
-summary(mcrp)
+summary(mcrp, alpha = .05, alternative = 'two.sided')
 ```
 With result:
 ```
