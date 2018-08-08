@@ -18,7 +18,7 @@ library(dplyr)
 
 petal_measurements <- iris %>% 
     filter(Species == 'virginica') %>% 
-    mutate(len = Petal.Length,
+    mutate(len = Petal.Length, 
            width = Petal.Width) %>%
     select(len, width)
 sepal_measurements <- iris %>% 
@@ -47,10 +47,10 @@ plot(mcrt)
 ![iris_mcrt](docs/images/iris_mcrt.png)
 
 ### Power Analysis
-Here we perform a power analysis of a contrived experiment - a two treatment ('a' & 'b') experiment with a minimally impactful effect size of 1 against otherwise standard normal populations.
+Here we perform a power analysis of a contrived experiment - a two treatment experiment with a minimally impactful effect size of 1 against otherwise standard normal populations.
 ```R
-gen_data_s1 <- function(){ data.frame(x = rnorm(50), class = 'a') }
-gen_data_s2 <- function(){ data.frame(x = rnorm(50, 1), class = 'b') }
+gen_data_s1 <- function(){ data.frame(x = rnorm(50)) }
+gen_data_s2 <- function(){ data.frame(x = rnorm(50, 1)) }
 mcrp <- mcrd_power(gen_data_s1, gen_data_s2, mean = mean(x), median = median(x), 
                     test_trials = 1e2)
 summary(mcrp, alpha = .05, alternative = 'two.sided')
