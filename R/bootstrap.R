@@ -143,7 +143,8 @@ summary.bootstrap <- function(object, level = .95, ...) {
     statistic_mean = mean(bootstrapped_statistic)
     statistic_se = sd(bootstrapped_statistic)
     
-    empirical_ci <- quantile(bootstrapped_statistic, c((1 - level) / 2, level + (1 - level) / 2))
+    empirical_ci <- quantile(bootstrapped_statistic, c((1 - level) / 2, level + (1 - level) / 2)) %>%
+      unname()
     
     total_summary <- rbind(total_summary, list(statistic =  statistic_name,
                                                    mean = statistic_mean,
